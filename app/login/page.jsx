@@ -1,21 +1,23 @@
 "use client";
-
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useFormState } from "react-dom";
-import createSession from "../actions/createSession";
 import { toast } from "react-toastify";
+import createSession from "../actions/createSession";
+import { useAuth } from "@/context/authContext";
 
 const LoginPage = () => {
   const [state, formAction] = useFormState(createSession, {});
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
+
   const router = useRouter();
+
   useEffect(() => {
-    if (state.error) {
-      toast.error(state.error);
-    }
+    if (state.error) toast.error(state.error);
     if (state.success) {
-      toast.success("Logged in successfully");
+      toast.success("Logged in successfully!");
+      setIsAuthenticated(true);
       router.push("/");
     }
   }, [state]);
@@ -40,6 +42,7 @@ const LoginPage = () => {
               id="email"
               name="email"
               className="border rounded w-full py-2 px-3"
+              autoComplete="email"
               required
             />
           </div>
@@ -56,6 +59,7 @@ const LoginPage = () => {
               id="password"
               name="password"
               className="border rounded w-full py-2 px-3"
+              autoComplete="password"
               required
             />
           </div>
