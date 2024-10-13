@@ -1,5 +1,3 @@
-import React from "react";
-import rooms from "@/data/rooms.json";
 import Heading from "@/components/Heading";
 import BookingForm from "@/components/BookingForm";
 import Image from "next/image";
@@ -11,7 +9,16 @@ const RoomPage = async ({ params }) => {
   const { id } = params;
   const room = await getSingleRoom(id);
 
-  if (!room) return <Heading title={"Room not found"} />;
+  if (!room) {
+    return <Heading title="Room Not Found" />;
+  }
+
+  const bucketId = process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ROOMS;
+  const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
+
+  const imageUrl = `https://cloud.appwrite.io/v1/storage/buckets/${bucketId}/files/${room.image}/view?project=${projectId}`;
+
+  const imageSrc = room.image ? imageUrl : "/images/no-image.jpg";
 
   return (
     <>
@@ -27,10 +34,10 @@ const RoomPage = async ({ params }) => {
 
         <div className="flex flex-col sm:flex-row sm:space-x-6">
           <Image
-            src={`/images/rooms/${room.image}`}
+            src={imageSrc}
+            alt={room.name}
             width={400}
             height={100}
-            alt={room.name}
             className="w-full sm:w-1/3 h-64 object-cover rounded-lg"
           />
 
@@ -39,7 +46,7 @@ const RoomPage = async ({ params }) => {
 
             <ul className="space-y-2">
               <li>
-                <span className="font-semibold text-gray-800">Size:</span>
+                <span className="font-semibold text-gray-800">Size:</span>{" "}
                 {room.sqft}
                 sq ft
               </li>
@@ -54,14 +61,14 @@ const RoomPage = async ({ params }) => {
                 {room.price_per_hour}/hour
               </li>
               <li>
-                <span className="font-semibold text-gray-800">Address:</span>
+                <span className="font-semibold text-gray-800">Address:</span>{" "}
                 {room.address}
               </li>
             </ul>
           </div>
         </div>
 
-        <BookingForm />
+        <BookingForm room={room} />
       </div>
     </>
   );
