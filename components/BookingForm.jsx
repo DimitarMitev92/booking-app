@@ -1,16 +1,32 @@
 "use client";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useFormState } from "react-dom";
+import { toast } from "react-toastify";
+import bookRoom from "@/app/actions/bookRoom";
 
-import { useState } from "react";
+const BookingForm = ({ room }) => {
+  const [state, formAction] = useFormState(bookRoom, {});
 
-const BookingForm = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.error) toast.error(state.error);
+    if (state.success) {
+      toast.success("Room has been booked!");
+      router.push("/bookings");
+    }
+  }, [state]);
+
   return (
     <div className="mt-6">
       <h2 className="text-xl font-bold">Book this Room</h2>
-      <form className="mt-4">
+      <form action={formAction} className="mt-4">
+        <input type="hidden" name="room_id" value={room.$id} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <label
-              forHtml="check_in_date"
+              htmlFor="check_in_date"
               className="block text-sm font-medium text-gray-700"
             >
               Check-In Date
@@ -25,7 +41,7 @@ const BookingForm = () => {
           </div>
           <div>
             <label
-              forHtml="check_in_time"
+              htmlFor="check_in_time"
               className="block text-sm font-medium text-gray-700"
             >
               Check-In Time
@@ -40,7 +56,7 @@ const BookingForm = () => {
           </div>
           <div>
             <label
-              forHtml="check_out_date"
+              htmlFor="check_out_date"
               className="block text-sm font-medium text-gray-700"
             >
               Check-Out Date
@@ -55,7 +71,7 @@ const BookingForm = () => {
           </div>
           <div>
             <label
-              forHtml="check_out_time"
+              htmlFor="check_out_time"
               className="block text-sm font-medium text-gray-700"
             >
               Check-Out Time

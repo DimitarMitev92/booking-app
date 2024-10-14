@@ -1,4 +1,4 @@
-import RoomCard from "@/components/Room.Card";
+import RoomCard from "@/components/RoomCard";
 import Heading from "@/components/Heading";
 import getAllRooms from "./actions/getAllRooms";
 
